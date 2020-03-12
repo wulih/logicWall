@@ -1,0 +1,27 @@
+<view class="section">
+  <view class="flex-wrp" style = "flex-derection:row;">
+    <view ><image class = "flex-image" src = "../../images/error.png" mode = "aspectFit"></image><view class = "flex-text">错题集</view></view>
+     <view ><image class = "flex-image" src = "../../images/top.png" mode = "aspectFit"></image><view class = "flex-text">榜单</view></view>
+     <view ><image class = "flex-image" src = "../../images/finish.png" mode = "aspectFit"></image><view class = "flex-text">已完成</view></view>
+  </view>
+</view>
+
+<view class="cover-view" wx:if = "{{coverView}}">
+<view class="userinfo-avatar"><open-data type = "userAvatarUrl"></open-data></view>
+<view class="view-text">逻辑长城小程序需获取您的昵称、头像个人信息</view>
+<button class="view-button" wx:if = "{{canIUse}}" open-type = "getUserInfo" bindgetuserinfo = "bindGetUserInfo">授权</button>
+<view wx:else>微信版本过低，请升级</view>
+</view>
+<view class="title">题目</view>
+<view class = "list-body">
+  <block wx:for="{{questionList}}" wx:key="_id">
+    <navigator class="navigator-block"  url="../question/detail?id={{item._id}}">
+     <view class="question-redirect">{{item.question}}</view>
+     <view class="list-detail"></view>
+    </navigator>
+  </block>
+</view>
+
+<view class="no-more">
+      <view wx:if="{{noMore}}">我们是有底线的呦～</view>
+</view>
