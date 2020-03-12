@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/question/detail"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "逻辑长城",
+    "navigationBarTextStyle": "black"
+  },
+ 
+  "sitemapLocation": "sitemap.json"
+}
