@@ -1,0 +1,44 @@
+ page {
+    background-color: #f8f8f8;
+  }
+  
+.list-body {
+   background-color: #fff;
+   margin-top: 15px; 
+}
+.navigator-block {
+  border-bottom: 1px solid rgb(231, 227, 227);
+  display: flex;
+  flex-direction: row;
+  height:50px;
+  margin-left:5px;
+}
+.question-redirect {
+  font-size:.15rem;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space:nowrap;
+  width: 90%;	
+  margin-left:10px;
+  line-height: 50px;
+}
+.list-detail{
+  transform: rotate(45deg);
+   border-right:  1px solid  #BDBDBD;
+   border-top: 1px solid  #BDBDBD;
+   width:10px;
+   height:10px;
+   float:right;
+   margin-top:20px;
+}
+.list-head{
+  margin-top:10px;
+  float:left;
+}
+.no-more{
+    color: #999;
+    text-align: center;
+    margin-top: .1rem;
+    font-size: .1rem;
+}

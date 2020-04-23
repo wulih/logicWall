@@ -1,0 +1,9 @@
+<view class = "list-body">
+  <block wx:for="{{rankList}}" wx:key="_id">
+    <view class="navigator-block">
+      <image class="flex-image" src = "../../images/rank{{index<3?index:''}}.png" mode="aspectFit"></image>
+      <view class="question">第 {{index + 1}} 名</view>
+      <view class="question-redirect">{{item.totalCnt}} 道</view>
+    </view>
+  </block>
+</view>

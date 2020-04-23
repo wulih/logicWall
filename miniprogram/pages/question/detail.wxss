@@ -1,1 +1,56 @@
-/* miniprogram/pages/question/detail.wxss */
+ page {
+    color: #666;
+    font-size:13px;
+    background-color: #f8f8f8
+  }
+
+  .page__hd {
+      text-indent: 2em;
+      background-color: #fff;
+      padding-top:15px; 
+  }
+
+  .page__desc {
+      width: 95%;
+      margin-right: auto; 
+      margin-left: auto;
+  }
+
+  .page__bd {
+    background-color: #fff;
+  }
+
+.my-checkbox:checked {  
+  border: 1px solid #fe0002;  
+  color: #fe0002;  
+  background: #fff;  
+} 
+
+.weui-cell.checkright {
+  border: 1px solid #fff;
+  background-color: rgba(11, 168, 11, 0.9);
+  border-radius: 40px;
+}
+
+.weui-cell.error {
+  border: 1px solid #fff;
+  background-color: rgba(255, 0, 0, 0.9);
+  border-radius: 40px;
+}
+.page_error{
+  margin-top: 10px;
+  width: 95%;
+  margin-right: auto; 
+  margin-left: auto;
+}
+.page_error_title{
+  font-size: 14px;
+  font-weight: bold;
+  color: rgb(0, 0, 0);
+}
+.page_error_desc{
+  text-indent: 2em;
+
+}
+
+

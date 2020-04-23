@@ -1,0 +1,12 @@
+<view class = "list-body">
+  <block wx:for="{{questionList}}" wx:key="_id">
+    <navigator class="navigator-block"  url="../question/detail?id={{item._id}}&type=success">
+     <view class="list-head"><mp-icon icon="tag" color="green" size="{{20}}"></mp-icon></view>
+     <view class="question-redirect">{{item.question}}</view> 
+    </navigator>
+  </block>
+</view>
+
+<view class="no-more">
+      <view wx:if="{{noMore}}">我们是有底线的呦～</view>
+</view>

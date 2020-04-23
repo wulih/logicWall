@@ -1,8 +1,14 @@
 <view class="section">
   <view class="flex-wrp" style = "flex-derection:row;">
-    <view ><image class = "flex-image" src = "../../images/error.png" mode = "aspectFit"></image><view class = "flex-text">错题集</view></view>
-     <view ><image class = "flex-image" src = "../../images/top.png" mode = "aspectFit"></image><view class = "flex-text">榜单</view></view>
-     <view ><image class = "flex-image" src = "../../images/finish.png" mode = "aspectFit"></image><view class = "flex-text">已完成</view></view>
+    <view >
+    <navigator url="../error/index">
+    <image class = "flex-image" src = "../../images/error.png" mode = "aspectFit"></image><view class = "flex-text">错题集</view>
+    </navigator>
+    </view>
+     <view ><navigator url="../rank/index"><image class = "flex-image" src = "../../images/top.png" mode = "aspectFit"></image><view class = "flex-text">榜单</view></navigator></view>
+     <view >
+     <navigator url="../success/index"><image class = "flex-image" src = "../../images/finish.png" mode = "aspectFit"></image><view class = "flex-text">已完成</view>
+     </navigator></view>
   </view>
 </view>
 
@@ -15,7 +21,7 @@
 <view class="title">题目</view>
 <view class = "list-body">
   <block wx:for="{{questionList}}" wx:key="_id">
-    <navigator class="navigator-block"  url="../question/detail?id={{item._id}}">
+    <navigator class="navigator-block"  url="../question/detail?id={{item._id}}&type=all">
      <view class="question-redirect">{{item.question}}</view>
      <view class="list-detail"></view>
     </navigator>

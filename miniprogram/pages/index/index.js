@@ -10,8 +10,17 @@ Page({
     noMore: false
   },
   onLoad: function () {
-    this.getList()
     this.checkAuth()
+    this.setUser()
+  },
+  onShow: function () {
+    this.setData({ 
+      questionList: null,
+      lastId: 0,
+      loading: false,
+      noMore: false
+     });
+    this.getList()
   },
   bindGetUserInfo: function (e) {
     wx.cloud.callFunction({
@@ -41,12 +50,13 @@ Page({
     wx.cloud.callFunction({
       name: 'list',
       data: {
-        startId: this.data.lastId
+        startId: this.data.lastId,
+        openId: getApp().globalData.openId
       },
     })
       .then(res => {
-        let list = res.result.data
-        if (list.length <= 0) {
+        let list = res.result.list
+        if (!list || list.length <= 0) {
           this.setData({ noMore: true })
           return;
         }
@@ -83,5 +93,20 @@ Page({
         })
       }
     })
+  },
+
+  setUser: function(e) {
+    if (getApp().globalData.openId) {
+        return;
+    }
+    wx.cloud.callFunction({
+      name: 'user'
+    })
+      .then(res => {
+        if (res.result.data && res.result.data.length > 0){
+          getApp().globalData.openId = res.result.data[0].openid
+          
+        }
+       })
   }
 })

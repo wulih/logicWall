@@ -1,0 +1,8 @@
+{
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 50,
+  "navigationBarTitleText": "已完成",
+  "usingComponents": {
+    "mp-icon": "../../components/icon/icon"
+  }
+}

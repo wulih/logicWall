@@ -1,14 +1,16 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/question/detail"
+    "pages/question/detail",
+    "pages/error/index",
+    "pages/success/index",
+    "pages/rank/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "逻辑长城",
+    "navigationBarTitleText": "公务员逻辑题",
     "navigationBarTextStyle": "black"
   },
- 
   "sitemapLocation": "sitemap.json"
 }
