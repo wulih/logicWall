@@ -33,6 +33,7 @@ Page({
       this.setData({ coverView: false })
     })
     .catch(res => {
+      console.log(res)
       wx.showToast({
         title: '系统异常，请稍后重试',
         duration: 3
@@ -71,6 +72,7 @@ Page({
         
       })
       .catch(res => {
+        console.log(res)
         wx.showToast({
           title: '系统异常，请稍后重试',
           duration: 3
@@ -87,6 +89,7 @@ Page({
         }
       },
       fail(res) {
+        console.log(res)
         wx.showToast({
           title: '系统异常，请稍后重试',
           duration: 3

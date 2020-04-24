@@ -2,10 +2,8 @@
 cloud = require('wx-server-sdk')
 cloud.init()
 
-var userModel = require('../models/user.js')
-var recordModel = require('../models/record.js')
-var subjectModel = require('../models/subject.js')
-var response = require('../common/response.js')
+var model = require('../models/index.js')
+var response = require('../common/index.js')
 
 // 云函数入口函数
 exports.main = async (event, context) => {
@@ -15,9 +13,9 @@ exports.main = async (event, context) => {
     if (!OPENID || OPENID == undefined) {
       return resolve(response.responseFail("用户尚未登录"))
     }
-    const user = userModel.user(OPENID)
-    const record = recordModel.userSuccessRecord(user, startId)
-    const subject = subjectModel.subjectListBySuccessRecord(record)
+    const user = model.user(OPENID)
+    const record = model.userSuccessRecord(user, startId)
+    const subject = model.subjectListBySuccessRecord(record)
     resolve(subject)
   })
 }

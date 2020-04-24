@@ -2,10 +2,8 @@
 cloud = require('wx-server-sdk')
 cloud.init()
 
-var userModel = require('../models/user.js')
-var recordModel = require('../models/record.js')
-var subjectModel = require('../models/subject.js')
-var response = require('../common/response.js')
+var model = require('../models/index.js')
+var response = require('../common/index.js')
 
 // 云函数入口函数
 exports.main = async (event, context) => {
@@ -15,22 +13,22 @@ exports.main = async (event, context) => {
     if (!OPENID || OPENID == undefined) {
       return resolve(response.responseFail("用户尚未登录"))
     }
-    const user = userModel.user(OPENID)
+    const user = model.user(OPENID)
     if (!event.id || !event.type) {
       return resolve(response.responseFail("参数错误"))
     }
-    const subject = subjectModel.getModelById(event.id, {answer: 1, analysis: 1})
+    const subject = model.getModelById(event.id, {answer: 1, analysis: 1})
     subject.then(res => {
       if (res.list.length <= 0) {
         return resolve(response.responseFail('题目不存在'))
       }
 
       if (res.list[0].answer !== event.userValue) {
-        recordModel.updateRecord(user, '', res.list[0]._id)
+        model.updateRecord(user, '', res.list[0]._id)
         return resolve(response.responseFail('回答错误', 20001, { analysis: res.list[0].analysis}))
       }
       
-      result = recordModel.updateRecord(user, res.list[0]._id, '')
+      result = model.updateRecord(user, res.list[0]._id, '')
       result.then(res => {
         var subject
         if (event.type == 'error') {
@@ -49,17 +47,17 @@ exports.main = async (event, context) => {
 
 function nextSubject(user, id)
 {
-  var record = recordModel.userRecord(user)
-  return subjectModel.subjectList(event.id, record, 1, { question: 1, option: 1 })
+  var record = model.userRecord(user)
+  return model.subjectList(id, record, 1, { question: 1, option: 1 })
 }
 
 function errorNextSubject(user, id)
 {
-    var record = recordModel.errorLast(user, id);
-    return subjectModel.subjectListByRecordNext(record)
+  var record = model.errorLast(user, id);
+  return model.subjectListByRecordNext(record)
 }
 
 function successNextSubject(user, id) {
-  var record = recordModel.successLast(user, id);
-  return subjectModel.subjectListByRecordNext(record)
+  var record = model.successLast(user, id);
+  return model.subjectListByRecordNext(record)
 }
