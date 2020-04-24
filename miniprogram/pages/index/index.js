@@ -108,5 +108,11 @@ Page({
           
         }
        })
+  },
+  onShareAppMessage: function (res) {
+    return {
+      title: '公务员逻辑题',
+      path: '/pages/index/index'
+    }
   }
 })

@@ -69,11 +69,11 @@ Page({
     this.getList()
   },
 
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
+  onShareAppMessage: function (res) {
+    return {
+      title: '公务员逻辑题已完成',
+      path: '/pages/success/index'
+    }
   },
   getList: function () {
     wx.cloud.callFunction({

@@ -57,11 +57,11 @@ Page({
      
   },
 
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
+  onShareAppMessage: function (res) {
+    return {
+      title: '公务员逻辑题榜单',
+      path: '/pages/rank/index'
+    }
   },
   getList: function () {
     wx.cloud.callFunction({

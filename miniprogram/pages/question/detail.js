@@ -148,10 +148,10 @@ Page({
 
   },
 
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
+  onShareAppMessage: function (res) {
+    return {
+      title: '公务员逻辑题',
+      path: '/pages/question/detail?id=' + this.data.question._id + '&type=' + this.data.type
+    }
   }
 })

@@ -68,13 +68,6 @@ Page({
     }
     this.getList()
   },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
-  },
   getList: function () {
     wx.cloud.callFunction({
       name: 'error',
@@ -107,4 +100,10 @@ Page({
         })
       })
   },
+  onShareAppMessage: function (res) {
+    return {
+      title: '公务员逻辑题错题集',
+      path: '/pages/error/index'
+    }
+  }
 })
