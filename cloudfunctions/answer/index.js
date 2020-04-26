@@ -2,7 +2,7 @@
 cloud = require('wx-server-sdk')
 cloud.init()
 
-var model = require('../models/index.js')
+var model = require('../model/index.js')
 var response = require('../common/index.js')
 
 // 云函数入口函数

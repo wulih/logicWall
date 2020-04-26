@@ -1,3 +1,4 @@
+// 云函数入口文件
 cloud = require('wx-server-sdk')
 
 cloud.init()
@@ -6,6 +7,10 @@ var date = require('../common/index.js')
 const db = cloud.database()
 const _ = db.command
 const $ = db.command.aggregate
+
+// 云函数入口函数
+exports.main = async (event, context) => {
+}
 
 function userRecord(user) {
   return new Promise(function (resolve, reject) {
@@ -400,7 +405,3 @@ exports.getLastId = getLastId
 exports.userSuccessRecord = userSuccessRecord
 exports.successLast = successLast
 exports.getRank = getRank
-
-// 云函数入口函数
-exports.main = async (event, context) => {
-}

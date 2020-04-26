@@ -14,7 +14,7 @@
 
 <view class="cover-view" wx:if = "{{coverView}}">
 <view class="userinfo-avatar"><open-data type = "userAvatarUrl"></open-data></view>
-<view class="view-text">逻辑长城小程序需获取您的昵称、头像个人信息</view>
+<view class="view-text">逻辑题小程序需获取您的昵称、头像个人信息</view>
 <button class="view-button" wx:if = "{{canIUse}}" open-type = "getUserInfo" bindgetuserinfo = "bindGetUserInfo">授权</button>
 <view wx:else>微信版本过低，请升级</view>
 </view>
