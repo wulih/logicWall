@@ -6,7 +6,7 @@ App({
     } else {
       wx.cloud.init({
         env: 'wulihua-develop-il4dj',
-        traceUser: true,
+        traceUser: true
       })
     }
 

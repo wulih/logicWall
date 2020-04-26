@@ -2,7 +2,7 @@
 cloud = require('wx-server-sdk')
 cloud.init()
 
-var recordModel = require('../model/index.js')
+var recordModel = require('../modelFunc/index.js')
 
 // 云函数入口函数
 exports.main = async (event, context) => {

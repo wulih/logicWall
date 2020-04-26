@@ -3,7 +3,7 @@ cloud = require('wx-server-sdk')
 
 cloud.init()
 
-var subjectModel = require('../model/index.js')
+var subjectModel = require('../modelFunc/index.js')
 
 // 云函数入口函数
 exports.main = async (event, context) => {
