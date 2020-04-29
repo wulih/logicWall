@@ -14,6 +14,12 @@ exports.main = async (event, context) => {
     case 'user':
       data = user(event.openId)
       break;
+    case 'updateUser':
+      data = updateUser(event.userId, event.username)
+      break;
+    case 'addUser':
+      data = addUser(event.openId, event.username, event.curTime)
+      break;
     case 'subjectList':
       data = subjectList(event.startId, 'exceptRecord' in event ? event.exceptRecord : null, 'size' in event ? event.size : 15, 'field' in event ? event.field : {question:1})
       break;
@@ -54,6 +60,18 @@ exports.main = async (event, context) => {
   return data
 }
 
+function addUser(openId, username, curTime)
+{
+  return db.collection('user').add({
+    data: {
+      openid: openId,
+      username: username,
+      create_at: curTime,
+      update_at: curTime
+    }
+  })
+}
+
 function userRecord(userId) {
    return db.collection('record').where({
           user_id: userId
@@ -73,6 +91,14 @@ function updateRecord(userId, successId = '', failId = '') {
       if (failId) {
         return updateFailRecord(userId, record, failId)
       }
+}
+
+function updateUser(userId, username) {
+  return db.collection('user').doc(userId).update({
+    data: {
+      username: username
+    }
+  })
 }
 
 function updateSuccessRecord(userId, record, successId) {

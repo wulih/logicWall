@@ -21,32 +21,41 @@ exports.main = async (event, context) => {
   })
 
   const curTime = curTimeResult.result
-  db.collection('user').where({
-    openid: OPENID
-  }).limit(1).get().then(res => {
-     if (res.data.length == 0) {
-       db.collection('user').add({
-         data: {
-           openid: OPENID,
-           username: username,
-           create_at: curTime,
-           update_at: curTime
-         }
-       })
-       return {openid:OPENID}
-     }
-
-    const user = res.data[0]
-    if (user.username != username) {
-      db.collection('user').doc(user._id).update({
-        data: {
-          username: username
-        }
-      })
-    }
+  const user = await callFunctionUrl({
+    url: 'user',
+    openId: OPENID
   })
- 
-  return {openid:OPENID}
+
+  var isRegist = user.result.data.length > 0 
+  if (isRegist && user.result.data[0].username != username) {
+      await callFunctionUrl({
+        url: 'updateUser',
+        userId: user.result.data[0]._id,
+        username: username
+      })
+  }
+
+  if (!isRegist) {
+     var result = await callFunctionUrl({
+       url: 'addUser',
+       openId: OPENID, 
+       username: username, 
+       curTime: curTime
+     })
+
+     isRegist = result.result && '_id ' in result.result
+  }
+  return {openid:OPENID, isRegist: isRegist}
+}
+
+function callFunctionUrl(data)
+{
+  return cloud.callFunction({
+    // 要调用的云函数名称
+    name: 'modelFunc',
+    // 传递给云函数的参数
+    data: data
+  })
 }
 
 function responseFail(message, code = 1, data = null) {

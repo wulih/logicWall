@@ -105,7 +105,8 @@ Page({
       .catch(res => {
         wx.showToast({
           title: '系统异常，请稍后重试',
-          duration: 15
+          icon: 'none',
+          duration: 2000
         })
       })
   },

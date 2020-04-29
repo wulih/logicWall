@@ -31,13 +31,22 @@ Page({
           },
     })
     .then(res => {
-      this.setData({ coverView: false, auth: true })
       getApp().setGlobalData(res.result)
+      if (res.result.isRegist) {
+        this.setData({ coverView: false, auth: true })
+      } else {
+        wx.showToast({
+          title: '授权失败！',
+          icon: 'none',
+          duration: 2000
+        })
+      }
     })
     .catch(res => {
       wx.showToast({
         title: '系统异常，请稍后重试',
-        duration: 3
+        icon: 'none',
+        duration: 2000
       })
     })
     
@@ -57,7 +66,7 @@ Page({
       },
     })
       .then(res => {
-        if(res.result && 'login' in res.result && res.result.login) {
+        if(res.result && 'login' in res.result) {
           this.setData({
             auth: res.result.login
           })
@@ -81,7 +90,8 @@ Page({
       .catch(res => {
         wx.showToast({
           title: '系统异常，请稍后重试',
-          duration: 15
+          icon: 'none',
+          duration: 2000
         })
       })
   },
@@ -107,7 +117,8 @@ Page({
       fail(res) {
         wx.showToast({
           title: '系统异常，请稍后重试',
-          duration: 15
+          icon: 'none',
+          duration: 2000
         })
       }
     })
