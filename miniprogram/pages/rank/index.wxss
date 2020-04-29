@@ -13,7 +13,7 @@
   margin-left:5px;
 }
 .question-redirect {
-  font-size:.15rem;
+  font-size:13px;
   color: #666;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -22,7 +22,7 @@
   line-height: 50px;
 }
 .question{
-  font-size:.15rem;
+  font-size:13px;
   color: #666;
   overflow: hidden;
   text-overflow: ellipsis;

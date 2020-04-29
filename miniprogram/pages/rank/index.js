@@ -68,7 +68,6 @@ Page({
       name: 'rank'
     })
       .then(res => {
-        console.log(res)
         if (res.result == null || res.result.list.length <= 0) {
           return;
         }

@@ -95,7 +95,7 @@
   margin-left:5px;
 }
 .question-redirect {
-  font-size:.15rem;
+  font-size:13px;
   color: #666;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -121,7 +121,7 @@
 }
 .title{
     margin-top: 20px;
-    font-size: .15rem;
+    font-size: 15px;
     color: #333;
     line-height: .22rem;
     padding: .1rem .15rem;

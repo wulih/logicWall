@@ -85,7 +85,7 @@ Page({
       },
     })
       .then(res => {
-        if ('errCode' in res.result && res.result.errCode != 200) {
+        if (res.result && 'errCode' in res.result && res.result.errCode != 200) {
           this.setData({
             error: res.result.errMsg
           })

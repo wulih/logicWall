@@ -99,8 +99,6 @@ async function successNextSubject(userId, id) {
     id:id
   })
 
-  console.log(record)
-
   return callFunctionUrl({
     url:'subjectListByRecordNext',
     record: record.result.list.length > 0 ? record.result.list[0] : null

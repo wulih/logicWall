@@ -57,9 +57,9 @@ Page({
       },
     })
       .then(res => {
-        if(!this.data.auth && res.result.login) {
+        if(res.result && 'login' in res.result && res.result.login) {
           this.setData({
-            auth: true
+            auth: res.result.login
           })
         }
         getApp().setGlobalData(res.result)
