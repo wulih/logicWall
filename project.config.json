@@ -23,7 +23,7 @@
 	},
 	"appid": "wx8052209f650ffd40",
 	"projectname": "logicWall",
-	"libVersion": "2.10.4",
+	"libVersion": "2.11.0",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
 	"cloudfunctionTemplateRoot": "cloudfunctionTemplate",

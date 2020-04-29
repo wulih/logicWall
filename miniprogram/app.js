@@ -9,7 +9,25 @@ App({
         traceUser: true
       })
     }
+    var openId = wx.getStorageSync('user_openid')
+    this.globalData = {
+      openId:  openId ? openId : ''
+    }
+  },
+  setGlobalData: function (data) {
+    if (this.globalData.openId) {
+      return;
+    }
 
-    this.globalData = {openId: ''}
+    if ('openid' in data && data.openid) {
+      this.globalData.openId = data.openid
+      wx.setStorageSync('user_openid', data.openid)
+      return;
+    }
+
+    var openId = wx.getStorageSync('user_openid')
+    if (openId) {
+      this.globalData.openId = openId
+    }
   }
 })

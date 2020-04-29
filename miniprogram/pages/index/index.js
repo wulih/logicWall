@@ -7,11 +7,11 @@ Page({
     questionList: null,
     lastId: 0,
     loading: false,
-    noMore: false
+    noMore: false,
+    auth: true
   },
   onLoad: function () {
     this.checkAuth()
-    this.setUser()
   },
   onShow: function () {
     this.setData({ 
@@ -26,14 +26,15 @@ Page({
     wx.cloud.callFunction({
         name: 'addUser',
         data: {
-            username: e.detail.userInfo.nickName
+            username: e.detail.userInfo.nickName,
+            openId: getApp().globalData.openId
           },
     })
     .then(res => {
-      this.setData({ coverView: false })
+      this.setData({ coverView: false, auth: true })
+      getApp().setGlobalData(res.result)
     })
     .catch(res => {
-      console.log(res)
       wx.showToast({
         title: '系统异常，请稍后重试',
         duration: 3
@@ -56,11 +57,18 @@ Page({
       },
     })
       .then(res => {
-        let list = res.result.list
-        if (!list || list.length <= 0) {
+        if(!this.data.auth && res.result.login) {
+          this.setData({
+            auth: true
+          })
+        }
+        getApp().setGlobalData(res.result)
+        if (res.result == null || res.result.subject.length <= 0) {
           this.setData({ noMore: true })
           return;
         }
+
+        let list = res.result.subject
         this.setData({lastId: list[list.length - 1].position}) 
         if (this.data.questionList !== null) {
           this.setData({
@@ -69,48 +77,40 @@ Page({
         } else {
           this.setData({ questionList: list });
         }
-        
       })
       .catch(res => {
-        console.log(res)
         wx.showToast({
           title: '系统异常，请稍后重试',
-          duration: 3
+          duration: 15
         })
       })
   },
+  openAuth: function (e) {
+    this.setData({
+      coverView: true
+    })
+  },
+  cancelAuth: function(e) {
+    this.setData({
+      coverView: false
+    })
+  }, 
   checkAuth: function (e) {
     wx.getSetting({
       success: res => {
         if (!res.authSetting['scope.userInfo']) {
-          this.setData({
-            coverView: true
-          })
+           this.setData({
+             auth: false
+           })
         }
       },
       fail(res) {
-        console.log(res)
         wx.showToast({
           title: '系统异常，请稍后重试',
-          duration: 3
+          duration: 15
         })
       }
     })
-  },
-
-  setUser: function(e) {
-    if (getApp().globalData.openId) {
-        return;
-    }
-    wx.cloud.callFunction({
-      name: 'user'
-    })
-      .then(res => {
-        if (res.result.data && res.result.data.length > 0){
-          getApp().globalData.openId = res.result.data[0].openid
-          
-        }
-       })
   },
   onShareAppMessage: function (res) {
     return {

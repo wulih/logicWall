@@ -4,13 +4,13 @@
     </view>
     <view class="page__bd">
            <mp-checkbox-group multi="{{false}}" bindchange="radioChange">
-                <mp-checkbox ext-class="{{item.checked ? item.result ? 'checkright' : 'error' : ''}}" wx:for="{{question.option}}" wx:key="key" label="{{item.key + '. ' + item.value}}" value="{{item.key}}" checked="{{item.checked}}">
+                <mp-checkbox ext-class="{{item.checked ? (item.result ? 'checkright' : 'error') : ''}}" wx:for="{{question.option}}" wx:key="key" label="{{item.key + '. ' + item.value}}" value="{{item.key}}" checked="{{item.checked}}">
                 </mp-checkbox>
            </mp-checkbox-group>
     </view>
 
     <view class="page_error">
-      <view class="page_error_title">{{error?'解析：':''}}</view>
+      <view class="page_error_title">{{error ? '解析：':''}}</view>
       <view class="page_error_desc">{{error}}</view>
     </view>
 </view>

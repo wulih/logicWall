@@ -65,13 +65,17 @@ Page({
     })
       .then(res => {
         if (res.result == null) {
+          radioItems[index]['result'] = true;
           this.setData({
+            question: this.data.question,
             error: '已全部完成',
             result: 'checkright'
           })
           return;
         }
-        if (res.result.errCode === 1) {
+        
+        if ('errCode' in res.result && res.result.errCode === 1) {
+          radioItems[index]['result'] = false;
           this.setData({
             question: this.data.question,
             error: res.result.errMsg,
@@ -81,7 +85,7 @@ Page({
           return;
         }
 
-        if (res.result.errCode === 20001) {
+        if ('errCode' in res.result &&  res.result.errCode === 20001) {
           radioItems[index]['result'] = false;
           this.setData({
             question: this.data.question,
@@ -91,6 +95,17 @@ Page({
 
           return;
         }
+
+        if (res.result == null || res.result.list.length <= 0) {
+          radioItems[index]['result'] = true;
+          this.setData({
+            question: this.data.question,
+            error: '已全部完成',
+            result: 'checkright'
+          })
+          return;
+        }
+      
         if (res.result.list && res.result.list.length > 0) {
           radioItems[index]['result'] = true;
           this.setData({

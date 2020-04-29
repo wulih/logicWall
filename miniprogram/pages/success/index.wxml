@@ -10,3 +10,7 @@
 <view class="no-more">
       <view wx:if="{{noMore}}">我们是有底线的呦～</view>
 </view>
+
+<view class="no-login" wx:if="{{error}}">
+{{error}}
+</view>

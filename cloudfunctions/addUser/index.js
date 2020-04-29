@@ -1,22 +1,29 @@
 // 云函数入口文件
-var date = require('../common/index.js')
-
 const cloud  = require('wx-server-sdk')
 cloud.init()
 const db = cloud.database()
 
 // 云函数入口函数
 exports.main = async (event, context) => {
-  const { OPENID } = cloud.getWXContext()
+  var { OPENID } = 'openId' in event && event.openId ? { OPENID: event.openId } : cloud.getWXContext()
+    
   if (!OPENID || OPENID == undefined) {
-    return response.responseFail("用户尚未登录")
+    return responseFail("服务器异常")
   }
   const username   = event.username  
-  
+  const curTimeResult = await cloud.callFunction({
+    // 要调用的云函数名称
+    name: 'common',
+    // 传递给云函数的参数
+    data: {
+        url: 'curTime'
+    }
+  })
+
+  const curTime = curTimeResult.result
   db.collection('user').where({
     openid: OPENID
   }).limit(1).get().then(res => {
-    const curTime = date.curTime()
      if (res.data.length == 0) {
        db.collection('user').add({
          data: {
@@ -26,7 +33,7 @@ exports.main = async (event, context) => {
            update_at: curTime
          }
        })
-       return {}
+       return {openid:OPENID}
      }
 
     const user = res.data[0]
@@ -39,5 +46,18 @@ exports.main = async (event, context) => {
     }
   })
  
-  return {}
+  return {openid:OPENID}
+}
+
+function responseFail(message, code = 1, data = null) {
+  var result = {
+    errCode: code,
+    errMsg: message
+  }
+
+  if (data) {
+    result.data = data
+  }
+
+  return result
 }

@@ -8,7 +8,8 @@ Page({
     questionList: null,
     lastId: 0,
     loading: false,
-    noMore: false
+    noMore: false,
+    error:''
   },
 
   /**
@@ -71,7 +72,7 @@ Page({
 
   onShareAppMessage: function (res) {
     return {
-      title: '公务员逻辑题已完成',
+      title: '公务员逻辑题已完成题目',
       path: '/pages/success/index'
     }
   },
@@ -84,6 +85,13 @@ Page({
       },
     })
       .then(res => {
+        if ('errCode' in res.result && res.result.errCode != 200) {
+          this.setData({
+            error: res.result.errMsg
+          })
+
+          return;
+        }
         if (res.result == null || res.result.list.length <= 0) {
           this.setData({ noMore: true })
           return;

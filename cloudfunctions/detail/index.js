@@ -3,8 +3,6 @@ cloud = require('wx-server-sdk')
 
 cloud.init()
 
-var subjectModel = require('../modelFunc/index.js')
-
 // 云函数入口函数
 exports.main = async (event, context) => {
   const id = event.id;
@@ -12,5 +10,21 @@ exports.main = async (event, context) => {
     throw "参数错误"
   }
 
-  return subjectModel.getModelById(id, {question: 1, option: 1})
+  const result = await callFunctionUrl({
+    url:'getModelById', 
+    id: id, 
+    select: {question: 1, option: 1}
+  })
+
+  return result.result
+}
+
+function callFunctionUrl(data)
+{
+  return cloud.callFunction({
+    // 要调用的云函数名称
+    name: 'modelFunc',
+    // 传递给云函数的参数
+    data: data
+  })
 }

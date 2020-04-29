@@ -10,7 +10,7 @@
   border-bottom: 1px solid rgb(231, 227, 227);
   display: flex;
   flex-direction: row;
-  height:50px;
+  height: 50px;
   margin-left:5px;
 }
 .question-redirect {
@@ -41,4 +41,11 @@
     text-align: center;
     margin-top: .1rem;
     font-size: .1rem;
+}
+
+.no-login{
+  color: #999;
+    text-align: center;
+    margin-top: .1rem;
+    font-size: 20px;
 }

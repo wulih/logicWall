@@ -3,47 +3,76 @@ cloud = require('wx-server-sdk')
 
 cloud.init()
 
-var date = require('../common/index.js')
 const db = cloud.database()
 const _ = db.command
 const $ = db.command.aggregate
 
 // 云函数入口函数
 exports.main = async (event, context) => {
+  var data
+  switch(event.url) {
+    case 'user':
+      data = user(event.openId)
+      break;
+    case 'subjectList':
+      data = subjectList(event.startId, 'exceptRecord' in event ? event.exceptRecord : null, 'size' in event ? event.size : 15, 'field' in event ? event.field : {question:1})
+      break;
+    case 'getModelById':
+      data = getModelById(event.id, event.select)
+      break;
+    case 'subjectListByFailRecord':
+      data = subjectListByFailRecord(event.record, 'field' in event ? event.field : {question:1})
+      break;
+    case 'subjectListBySuccessRecord':
+      data = subjectListBySuccessRecord(event.record, 'field' in event ? event.field : {question:1})
+      break;
+    case 'subjectListByRecordNext':
+      data = subjectListByRecordNext(event.record, 'field' in event ? event.field : field = { question: 1, option: 1 })
+      break;
+    case 'userRecord':
+      data= userRecord(event.userId)
+      break;
+    case 'updateRecord':
+      data=updateRecord(event.userId, 'successId' in event ? event.successId : '', 'failId' in event ? event.failId : '')
+      break;
+    case 'userErrorRecord':
+      data = getModelByUserId(event.userId, 'startId' in event ? event.startId : '', 'limit' in event ? event.limit : 15)
+      break;
+    case 'errorLast':
+      data = findErrorLast(event.userId, event.id)
+      break;
+    case 'userSuccessRecord':
+      data = getSuccessByUserId(event.userId, 'startId' in event ? event.startId : '', 'limit' in event ? event.limit : 15)
+      break;
+    case 'successLast':
+      data=findSuccessLast(event.userId, event.id)
+      break;
+    case 'getRank':
+      data = getRank()
+      break;
+  }
+  return data
 }
 
-function userRecord(user) {
-  return new Promise(function (resolve, reject) {
-    user.then(res => {
-      if (res.data.length > 0) {
-        return resolve(db.collection('record').where({
-          user_id: res.data[0]._id
-        }).limit(1).get())
-      } else {
-        return resolve(null)
-      }
-    })
-  })
+function userRecord(userId) {
+   return db.collection('record').where({
+          user_id: userId
+        }).limit(1).get()
 }
 
-function updateRecord(user, successId = '', failId = '') {
-  return new Promise(function (resolve, reject) {
-    user.then(res => {
-      const userId = res.data[0]._id
-      var record = userRecord(user)
+function updateRecord(userId, successId = '', failId = '') {
+      var record = userRecord(userId)
       if (record === null) {
-        return resolve(addRecord(userId, successId, failId));
+        return addRecord(userId, successId, failId);
       }
 
       if (successId) {
-        return resolve(updateSuccessRecord(userId, record, successId))
+        return updateSuccessRecord(userId, record, successId)
       }
 
       if (failId) {
-        return resolve(updateFailRecord(userId, record, failId))
+        return updateFailRecord(userId, record, failId)
       }
-    })
-  })
 }
 
 function updateSuccessRecord(userId, record, successId) {
@@ -57,7 +86,7 @@ function updateSuccessRecord(userId, record, successId) {
         return resolve(db.collection('record').doc(res.data[0]._id).update({
           data: {
             answer_success: _.push([successId]),
-            update_at: date.curTime()
+            update_at: getCurTime()
           }
         }))
       }
@@ -76,7 +105,7 @@ function updateFailRecord(userId, record, failId) {
         return resolve(db.collection('record').doc(res.data[0]._id).update({
           data: {
             answer_fail: _.push([failId]),
-            update_at: date.curTime()
+            update_at: getCurTime()
           }
         }))
       }
@@ -86,7 +115,7 @@ function updateFailRecord(userId, record, failId) {
 }
 
 function addRecord(userId, successId = '', failId = '') {
-  const curTime = date.curTime()
+  const curTime = getCurTime()
   return new Promise(function (resolve, reject) {
     resolve(db.collection('record').add({
       data: {
@@ -97,18 +126,6 @@ function addRecord(userId, successId = '', failId = '') {
         update_at: curTime
       }
     }))
-  })
-}
-
-function userErrorRecord(user, startId = '', limit = 15) {
-  return new Promise(function (resolve, reject) {
-    user.then(res => {
-      if (res.data.length > 0) {
-        return resolve(getModelByUserId(res.data[0]._id, startId, limit))
-      } else {
-        return resolve(null)
-      }
-    })
   })
 }
 
@@ -134,18 +151,6 @@ function getModelByUserId(userId, startId = '', limit = 15) {
     .end()
 }
 
-function errorLast(user, id) {
-  return new Promise(function (resolve, reject) {
-    user.then(res => {
-      if (res.data.length > 0) {
-        return resolve(findErrorLast(res.data[0]._id, id))
-      } else {
-        return resolve(null)
-      }
-    })
-  })
-}
-
 function findErrorLast(userId, startId) {
   return db.collection('record').aggregate()
     .match({
@@ -155,32 +160,6 @@ function findErrorLast(userId, startId) {
       nextId: $.arrayElemAt(['$answer_fail', $.add([$.indexOfArray(['$answer_fail', startId]), 1])])
     })
     .end()
-}
-
-function getLastId(record) {
-  return new Promise(function (resolve, reject) {
-    if (record === null) {
-      return resolve(null)
-    }
-    record.then(res => {
-      if (res.list.length > 0 && res.list[0].answer_fail.length > 0) {
-        return resolve({ lastId: res.list[0].answer_fail[res.list[0].answer_fail.length - 1] })
-      }
-      return resolve(null)
-    })
-  })
-}
-
-function userSuccessRecord(user, startId = '', limit = 15) {
-  return new Promise(function (resolve, reject) {
-    user.then(res => {
-      if (res.data.length > 0) {
-        return resolve(getSuccessByUserId(res.data[0]._id, startId, limit))
-      } else {
-        return resolve(null)
-      }
-    })
-  })
 }
 
 function getSuccessByUserId(userId, startId = '', limit = 15) {
@@ -203,18 +182,6 @@ function getSuccessByUserId(userId, startId = '', limit = 15) {
       answer_success: $.slice(['$answer_success', $.add([$.indexOfArray(['$answer_success', startId]), 1]), limit])
     })
     .end()
-}
-
-function successLast(user, id) {
-  return new Promise(function (resolve, reject) {
-    user.then(res => {
-      if (res.data.length > 0) {
-        return resolve(findSuccessLast(res.data[0]._id, id))
-      } else {
-        return resolve(null)
-      }
-    })
-  })
 }
 
 function findSuccessLast(userId, startId) {
@@ -241,18 +208,12 @@ function getRank() {
 }
 
 
-function subjectList(startId, exceptRecord = null, size = 15, field = { question: 1 }) {
-  return new Promise(function (resolve, reject) {
+function subjectList(startId, exceptRecord = null, size = 15, field = { question: 1, position: 1 }) {
     if (exceptRecord === null) {
-      return resolve(this.getListByStartId(startId, size, field))
+      return getListByStartId(startId, size, field)
     }
-    exceptRecord.then(res => {
-      if (res.data.length > 0) {
-        return resolve(getListByExceptIds(res.data[0].answer_success, startId, size, field))
-      }
-      return resolve(getListByStartId(startId, size, field))
-    })
-  })
+
+    return getListByExceptIds(exceptRecord.answer_success, startId, size, field)
 }
 
 function getListByStartId(startId, size, field) {
@@ -303,35 +264,19 @@ function getModelById(id, select) {
 }
 
 function subjectListByFailRecord(record, field = { question: 1 }) {
-  return new Promise(function (resolve, reject) {
-    if (record === null) {
-      return resolve(null)
+   if (record === null) {
+      return null
     }
-    record.then(res => {
-      if (res.list.length > 0 && res.list[0].answer_fail.length > 0) {
-        var answerFail = res.list[0].answer_fail
-        return resolve(getListByIds(answerFail, field))
-      }
-
-      return resolve(null)
-    })
-  })
+   
+    return getListByIds(record, field)
 }
 
 function subjectListBySuccessRecord(record, field = { question: 1 }) {
-  return new Promise(function (resolve, reject) {
     if (record === null) {
-      return resolve(null)
+      return null
     }
-    record.then(res => {
-      if (res.list.length > 0 && res.list[0].answer_success.length > 0) {
-        var answerSuccess = res.list[0].answer_success
-        return resolve(getListByIds(answerSuccess, field))
-      }
-
-      return resolve(null)
-    })
-  })
+    
+    return getListByIds(record, field)
 }
 
 function findValue(id, listObject) {
@@ -363,45 +308,34 @@ function getListByIds(ids, field) {
 }
 
 function subjectListByRecordNext(record, field = { question: 1, option: 1 }) {
-  return new Promise(function (resolve, reject) {
-    if (record === null) {
-      return resolve(null)
+    if (record === null || !record.hasOwnProperty('nextId')) {
+      return null
     }
-    record.then(res => {
-      if (res.list.length > 0 && res.list[0].nextId) {
-        return resolve(db.collection('subject').aggregate()
-          .match({
-            _id: res.list[0].nextId
+ 
+    return db.collection('subject').aggregate()
+      .match({
+            _id: record['nextId']
           })
-          .project(field).end())
-      }
-      return resolve(null)
-    })
-  })
+    .project(field).end()
+      
 }
 
 function user(openId) {
-  return new Promise(function (resolve, reject) {
-    return resolve(db.collection('user').where({
+    return db.collection('user').where({
       openid: openId
-    }).limit(1).get())
-  })
-
+    }).limit(1).get()
 }
 
-exports.user = user
+async function getCurTime()
+{
+  const curTimeResult = await cloud.callFunction({
+    // 要调用的云函数名称
+    name: 'common',
+    // 传递给云函数的参数
+    data: {
+        'url': 'curTime'
+    }
+  })
 
-exports.subjectList = subjectList
-exports.getModelById = getModelById
-exports.subjectListByFailRecord = subjectListByFailRecord
-exports.subjectListBySuccessRecord = subjectListBySuccessRecord
-exports.subjectListByRecordNext = subjectListByRecordNext
-
-exports.userRecord = userRecord
-exports.updateRecord = updateRecord
-exports.userErrorRecord = userErrorRecord
-exports.errorLast = errorLast
-exports.getLastId = getLastId
-exports.userSuccessRecord = userSuccessRecord
-exports.successLast = successLast
-exports.getRank = getRank
+  return curTimeResult.result
+}

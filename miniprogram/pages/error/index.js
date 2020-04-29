@@ -8,7 +8,8 @@ Page({
     questionList: null,
     lastId: 0,
     loading: false,
-    noMore: false
+    noMore: false,
+    error: ''
   },
 
   /**
@@ -77,10 +78,18 @@ Page({
       },
     })
       .then(res => {
-        if (res.result == null || res.result.list.length <= 0) {
+        if (res.result == null) { 
           this.setData({ noMore: true })
           return;
         }
+        if ('errCode' in res.result && res.result.errCode != 200) {
+          this.setData({
+            error: res.result.errMsg
+          })
+
+          return;
+        }
+        
         let list = res.result.list
         
         this.setData({ lastId: res.result.list[res.result.list.length - 1]._id })
@@ -96,7 +105,7 @@ Page({
       .catch(res => {
         wx.showToast({
           title: '系统异常，请稍后重试',
-          duration: 3
+          duration: 15
         })
       })
   },

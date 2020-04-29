@@ -3,7 +3,19 @@ cloud = require('wx-server-sdk')
 
 cloud.init()
 
+exports.curTime = curTime
 exports.main = async (event, context) => {
+  var data
+  switch(event.url) {
+    case 'responseSuccess':
+      data = responseSuccess(event.data)
+      break;
+    case 'curTime':
+      data = curTime()
+      break;
+  }
+
+  return data
 }
 
 function curTime() {
@@ -41,22 +53,3 @@ function responseSuccess(data) {
     data: data
   }
 }
-
-function responseFail(message, code = 1, data = null) {
-  var result = {
-    errCode: code,
-    errMsg: message
-  }
-
-  if (data) {
-    result.data = data
-  }
-
-  return result
-}
-
-
-exports.responseFail = responseFail
-exports.responseSuccess = responseSuccess
-
-exports.curTime = curTime

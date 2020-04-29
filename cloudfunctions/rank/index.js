@@ -2,12 +2,21 @@
 cloud = require('wx-server-sdk')
 cloud.init()
 
-var recordModel = require('../modelFunc/index.js')
-
 // 云函数入口函数
 exports.main = async (event, context) => {
-  return new Promise(function (resolve, reject) {
-    const record = recordModel.getRank()
-    return resolve(record)
+  
+    const record = await callFunctionUrl({
+      url: 'getRank'
+    })
+    return record.result
+}
+
+function callFunctionUrl(data)
+{
+  return cloud.callFunction({
+    // 要调用的云函数名称
+    name: 'modelFunc',
+    // 传递给云函数的参数
+    data: data
   })
 }

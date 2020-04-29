@@ -2,62 +2,130 @@
 cloud = require('wx-server-sdk')
 cloud.init()
 
-var model = require('../modelFunc/index.js')
-var response = require('../common/index.js')
-
 // 云函数入口函数
 exports.main = async (event, context) => {
-  return new Promise(function (resolve, reject) {
-    var { OPENID } = event.openId ? { OPENID: event.openId} : cloud.getWXContext()
-
+    var { OPENID } = 'openId' in event && event.openId ? { OPENID: event.openId } : cloud.getWXContext()
     if (!OPENID || OPENID == undefined) {
-      return resolve(response.responseFail("用户尚未登录"))
+      return responseFail("系统异常")
     }
-    const user = model.user(OPENID)
-    if (!event.id || !event.type) {
-      return resolve(response.responseFail("参数错误"))
-    }
-    const subject = model.getModelById(event.id, {answer: 1, analysis: 1})
-    subject.then(res => {
-      if (res.list.length <= 0) {
-        return resolve(response.responseFail('题目不存在'))
-      }
 
-      if (res.list[0].answer !== event.userValue) {
-        model.updateRecord(user, '', res.list[0]._id)
-        return resolve(response.responseFail('回答错误', 20001, { analysis: res.list[0].analysis}))
+    if (!event.id || !event.type) {
+      return responseFail("参数错误")
+    }
+
+    const subject = await callFunctionUrl({
+      url:'getModelById',
+      id: event.id,
+      select:{answer: 1, analysis: 1}
+    })
+   
+    if (subject.result.list.length <= 0) {
+      return responseFail('题目不存在')
+    }
+
+    const user = await callFunctionUrl({
+      url: 'user',
+      openId: OPENID
+    })
+
+    if (user.result.data.length <= 0) {
+      return responseFail('请先登录')
+    }
+
+    const userId = user.result.data[0]._id
+    const subjectId = subject.result.list[0]._id
+    if (subject.result.list[0].answer !== event.userValue) {
+        await callFunctionUrl({
+          url:'updateRecord',
+          userId: userId,
+          successId: '',
+          failId: subjectId
+        })
+        return responseFail('回答错误', 20001, { analysis: subject.result.list[0].analysis})
+    }
+      
+     await callFunctionUrl({
+        url:'updateRecord',
+        userId: userId,
+        successId: subjectId,
+        failId: ''
+      })
+     
+      var result
+      if (event.type == 'error') {
+          result = await errorNextSubject(userId, event.id)
+      } else if (event.type=='success') {
+          result = await successNextSubject(userId, event.id)
+      } else {
+          result = await nextSubject(userId, event.id)
       }
       
-      result = model.updateRecord(user, res.list[0]._id, '')
-      result.then(res => {
-        var subject
-        if (event.type == 'error') {
-          subject = errorNextSubject(user, event.id)
-        } else if (event.type=='success') {
-          subject = successNextSubject(user, event.id)
-        } else {
-          subject = nextSubject(user, event.id)
-        }
-        
-        return resolve(subject) 
-      })
-    })
+      return result.result
+}
+
+async function nextSubject(userId, id)
+{
+  var record = await callFunctionUrl({
+    url:'userRecord',
+    userId: userId
+  })
+  
+  return callFunctionUrl({
+    url:'subjectList',
+    startId: id,
+    exceptRecord: record.result.data.length > 0 ? record.result.data[0] : null,
+    size:1,
+    field:{ question: 1, option: 1 }
   })
 }
 
-function nextSubject(user, id)
+async function errorNextSubject(userId, id)
 {
-  var record = model.userRecord(user)
-  return model.subjectList(id, record, 1, { question: 1, option: 1 })
+  var record = await callFunctionUrl({
+    url:'errorLast',
+    userId: userId,
+    id: id
+  })
+  return callFunctionUrl({
+    url:'subjectListByRecordNext',
+    record: record.result.list.length > 0 ? record.result.list[0] : null
+  })
 }
 
-function errorNextSubject(user, id)
-{
-  var record = model.errorLast(user, id);
-  return model.subjectListByRecordNext(record)
+async function successNextSubject(userId, id) {
+  var record = await callFunctionUrl({
+    url:'successLast',
+    userId: userId,
+    id:id
+  })
+
+  console.log(record)
+
+  return callFunctionUrl({
+    url:'subjectListByRecordNext',
+    record: record.result.list.length > 0 ? record.result.list[0] : null
+  })
 }
 
-function successNextSubject(user, id) {
-  var record = model.successLast(user, id);
-  return model.subjectListByRecordNext(record)
+function responseFail(message, code = 1, data = null) {
+  var result = {
+    errCode: code,
+    errMsg: message
+  }
+
+  if (data) {
+    result.data = data
+  }
+
+  return result
+}
+
+function callFunctionUrl(data)
+{
+  return cloud.callFunction({
+    // 要调用的云函数名称
+    name: 'modelFunc',
+    // 传递给云函数的参数
+    data: data
+  })
 }
