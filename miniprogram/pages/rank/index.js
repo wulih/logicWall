@@ -59,7 +59,7 @@ Page({
 
   onShareAppMessage: function (res) {
     return {
-      title: '公务员逻辑题榜单',
+      title: '逻辑闯关榜单',
       path: '/pages/rank/index'
     }
   },

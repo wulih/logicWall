@@ -9,7 +9,7 @@
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "公务员逻辑题",
+    "navigationBarTitleText": "逻辑闯关",
     "navigationBarTextStyle": "black"
   },
   "sitemapLocation": "sitemap.json"

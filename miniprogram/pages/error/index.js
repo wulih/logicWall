@@ -112,7 +112,7 @@ Page({
   },
   onShareAppMessage: function (res) {
     return {
-      title: '公务员逻辑题错题集',
+      title: '逻辑闯关错题集',
       path: '/pages/error/index'
     }
   }

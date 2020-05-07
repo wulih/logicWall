@@ -167,7 +167,7 @@ Page({
 
   onShareAppMessage: function (res) {
     return {
-      title: '公务员逻辑题',
+      title: '逻辑闯关',
       path: '/pages/question/detail?id=' + this.data.question._id + '&type=' + this.data.type
     }
   }

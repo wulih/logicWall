@@ -72,7 +72,7 @@ Page({
 
   onShareAppMessage: function (res) {
     return {
-      title: '公务员逻辑题已完成题目',
+      title: '逻辑闯关已完成题目',
       path: '/pages/success/index'
     }
   },
