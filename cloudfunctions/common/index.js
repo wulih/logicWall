@@ -20,10 +20,13 @@ exports.main = async (event, context) => {
 
 function curTime() {
   var dateObj = new Date();
+  var diff = dateObj.getTimezoneOffset();
+  var bjTime = dateObj.getTime() + diff * 60 * 1000 - (-28800000)
+  dateObj.setTime(bjTime)
   var year = dateObj.getFullYear();
   var month = dateObj.getMonth() + 1;
   var date = dateObj.getDate();
-  var day = dateObj.getDay();
+ // var day = dateObj.getDay();
   var hour = dateObj.getHours();
   var minute = dateObj.getMinutes();
   var second = dateObj.getSeconds();

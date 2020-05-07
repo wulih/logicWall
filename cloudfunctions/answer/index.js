@@ -32,6 +32,7 @@ exports.main = async (event, context) => {
       return responseFail('请先登录')
     }
 
+    var curTimeResult = await getCurTime()
     const userId = user.result.data[0]._id
     const subjectId = subject.result.list[0]._id
     if (subject.result.list[0].answer !== event.userValue) {
@@ -39,7 +40,8 @@ exports.main = async (event, context) => {
           url:'updateRecord',
           userId: userId,
           successId: '',
-          failId: subjectId
+          failId: subjectId,
+          curTime: curTimeResult.result
         })
         return responseFail('回答错误', 20001, { analysis: subject.result.list[0].analysis})
     }
@@ -48,7 +50,8 @@ exports.main = async (event, context) => {
         url:'updateRecord',
         userId: userId,
         successId: subjectId,
-        failId: ''
+        failId: '',
+        curTime: curTimeResult.result
       })
      
       var result
@@ -126,4 +129,17 @@ function callFunctionUrl(data)
     // 传递给云函数的参数
     data: data
   })
+}
+
+function getCurTime()
+{
+  return cloud.callFunction({
+    // 要调用的云函数名称
+    name: 'common',
+    // 传递给云函数的参数
+    data: {
+        'url': 'curTime'
+    }
+  })
+  return curTimeResult.result
 }

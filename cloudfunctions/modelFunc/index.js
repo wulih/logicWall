@@ -39,7 +39,7 @@ exports.main = async (event, context) => {
       data= userRecord(event.userId)
       break;
     case 'updateRecord':
-      data=updateRecord(event.userId, 'successId' in event ? event.successId : '', 'failId' in event ? event.failId : '')
+      data=updateRecord(event.userId, 'successId' in event ? event.successId : '', 'failId' in event ? event.failId : '', 'curTime' in event ? event.curTime : '')
       break;
     case 'userErrorRecord':
       data = getModelByUserId(event.userId, 'startId' in event ? event.startId : '', 'limit' in event ? event.limit : 15)
@@ -78,18 +78,18 @@ function userRecord(userId) {
         }).limit(1).get()
 }
 
-function updateRecord(userId, successId = '', failId = '') {
+function updateRecord(userId, successId = '', failId = '', curTime = '') {
       var record = userRecord(userId)
       if (record === null) {
-        return addRecord(userId, successId, failId);
+        return addRecord(userId, successId, failId, curTime);
       }
 
       if (successId) {
-        return updateSuccessRecord(userId, record, successId)
+        return updateSuccessRecord(userId, record, successId, curTime)
       }
 
       if (failId) {
-        return updateFailRecord(userId, record, failId)
+        return updateFailRecord(userId, record, failId, curTime)
       }
 }
 
@@ -101,7 +101,7 @@ function updateUser(userId, username) {
   })
 }
 
-function updateSuccessRecord(userId, record, successId) {
+function updateSuccessRecord(userId, record, successId, curTime) {
   return new Promise(function (resolve, reject) {
     record.then(res => {
       if (res.data.length <= 0) {
@@ -112,7 +112,7 @@ function updateSuccessRecord(userId, record, successId) {
         return resolve(db.collection('record').doc(res.data[0]._id).update({
           data: {
             answer_success: _.push([successId]),
-            update_at: getCurTime()
+            update_at: curTime
           }
         }))
       }
@@ -121,17 +121,18 @@ function updateSuccessRecord(userId, record, successId) {
   })
 }
 
-function updateFailRecord(userId, record, failId) {
+function updateFailRecord(userId, record, failId, curTime) {
   return new Promise(function (resolve, reject) {
     record.then(res => {
       if (res.data.length <= 0) {
-        return resolve(addRecord(userId, '', failId));
+        return resolve(addRecord(userId, '', failId, curTime));
       }
       if (res.data[0].answer_fail.indexOf(failId) < 0) {
+        
         return resolve(db.collection('record').doc(res.data[0]._id).update({
           data: {
             answer_fail: _.push([failId]),
-            update_at: getCurTime()
+            update_at: curTime
           }
         }))
       }
@@ -140,8 +141,7 @@ function updateFailRecord(userId, record, failId) {
   })
 }
 
-function addRecord(userId, successId = '', failId = '') {
-  const curTime = getCurTime()
+function addRecord(userId, successId = '', failId = '', curTime = '') {
   return new Promise(function (resolve, reject) {
     resolve(db.collection('record').add({
       data: {
@@ -350,18 +350,4 @@ function user(openId) {
     return db.collection('user').where({
       openid: openId
     }).limit(1).get()
-}
-
-async function getCurTime()
-{
-  const curTimeResult = await cloud.callFunction({
-    // 要调用的云函数名称
-    name: 'common',
-    // 传递给云函数的参数
-    data: {
-        'url': 'curTime'
-    }
-  })
-
-  return curTimeResult.result
 }
