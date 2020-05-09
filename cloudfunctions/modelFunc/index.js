@@ -21,7 +21,7 @@ exports.main = async (event, context) => {
       data = addUser(event.openId, event.username, event.curTime)
       break;
     case 'subjectList':
-      data = subjectList(event.startId, 'exceptRecord' in event ? event.exceptRecord : null, 'size' in event ? event.size : 15, 'field' in event ? event.field : {question:1})
+      data = subjectList(event.startId, 'exceptRecord' in event ? event.exceptRecord : null, 'size' in event ? event.size : 15, 'field' in event ? event.field : {question:1, position: 1})
       break;
     case 'getModelById':
       data = getModelById(event.id, event.select)
