@@ -14,3 +14,13 @@
       <view class="page_error_desc">{{error}}</view>
     </view>
 </view>
+
+<view class="cover-view" wx:if = "{{coverView}}">
+<view class="userinfo-avatar"><open-data type = "userAvatarUrl"></open-data></view>
+<view class="view-text">逻辑题小程序需获取您的昵称、头像个人信息</view>
+<view wx:if= "{{canIUse}}">
+<button class="cancel-button" bindtap = "cancelAuth">取消</button>
+<button class="view-button"  open-type = "getUserInfo" bindgetuserinfo = "bindGetUserInfo">授权</button>
+</view>
+<view wx:else>微信版本过低，请升级</view>
+</view>

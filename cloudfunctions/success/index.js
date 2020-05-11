@@ -15,7 +15,7 @@ exports.main = async (event, context) => {
     })
 
     if (user.result.data.length <= 0) {
-      return responseFail('请先登录')
+      return responseFail('请先答题')
     }
 
     const record = await callFunctionUrl({

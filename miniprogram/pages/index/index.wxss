@@ -20,47 +20,7 @@
   text-align: center;
   color: #666;
 }
-.cover-view {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  background: rgba(133, 129, 129, 0.5);
-}
-.view-text {
-  color: #FFFFFF;
-  text-align: center;
-  width: 80%;
-  margin-right: auto; 
-  margin-left: auto; 
-}
-.view-button {
-  top: 15px;
-  background: #FF4343;
-  border: 1px solid #FF4343;
-  box-shadow: 0 2px 12px 0 rgba(255,67,67,0.45);
-  border-radius: 45px;
-  font-size: 20px;
-  color: #FFFFFF;
-  letter-spacing: 0;
-  width: 45%;
-  display: inline-block;
-}
 
-.cancel-button {
-  top: 15px;
-  background: rgb(224, 223, 223);
-  box-shadow: 0 2px 12px 0 rgba(230, 226, 226, 0.45);
-  border-radius: 45px;
-  font-size: 20px;
-  color: #FFFFFF;
-  letter-spacing: 0;
-  width: 45%;
-  display: inline-block;
-  margin-left: 5%; 
-}
 
 .login-button {
   top: 15px;
@@ -74,15 +34,7 @@
   width: 80%;
   z-index: 100;
 }
-.userinfo-avatar {
-  width: 150px;
-  height:150px;
-  border-radius: 50%;
-  margin-top:20%;
-  margin-bottom:20rpx;
-  margin-right: auto; 
-  margin-left: auto; 
-}
+
 .list-body {
    background-color: #fff;
    margin-top: 15px; 

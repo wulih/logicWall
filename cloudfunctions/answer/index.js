@@ -29,7 +29,7 @@ exports.main = async (event, context) => {
     })
 
     if (user.result.data.length <= 0) {
-      return responseFail('请先登录')
+      return responseFail('请先授权', 401)
     }
 
     var curTimeResult = await getCurTime()

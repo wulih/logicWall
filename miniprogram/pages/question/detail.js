@@ -5,16 +5,21 @@ Page({
    * 页面的初始数据
    */
   data: {
+    canIUse: wx.canIUse('button.open-type.getUserInfo'), 
     question: null,
     error:'',
     result:'',
-    type:''
+    type:'',
+    coverView: false,
+    auth: getApp().globalData.login ? true : false,
+    selectOption: null
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    this.checkAuth()
     options.openId = getApp().globalData.openId
     wx.cloud.callFunction({
       name: 'detail',
@@ -45,6 +50,18 @@ Page({
   },
 
   radioChange: function(e) {
+    this.setData({
+      selectOption: e 
+    })
+    if (this.data.auth) {
+      this.answerQuestion()
+    } else {
+      this.popAuth()
+    }
+    
+  },
+  answerQuestion: function() {
+    var e = this.data.selectOption
     var index = 0;
     var radioItems = this.data.question.option;
     for (var i = 0, len = radioItems.length; i < len; ++i) {
@@ -55,7 +72,6 @@ Page({
         radioItems[i].checked = false;
       }
     }
-    
     wx.cloud.callFunction({
       name: 'answer',
       data: {
@@ -74,6 +90,10 @@ Page({
             result: 'checkright'
           })
           return;
+        }
+        if ('errCode' in res.result && res.result.errCode === 401) {
+            this.popAuth()
+            return 
         }
         
         if ('errCode' in res.result && res.result.errCode === 1) {
@@ -123,6 +143,38 @@ Page({
       })
   },
 
+  bindGetUserInfo: function (e) {
+    wx.cloud.callFunction({
+        name: 'addUser',
+        data: {
+            username: e.detail.userInfo.nickName,
+            openId: getApp().globalData.openId
+          },
+    })
+    .then(res => {
+      getApp().setGlobalData(res.result)
+      if (res.result.isRegist) {
+        getApp().globalData.login = true
+        this.setData({ coverView: false, auth: true })
+        this.answerQuestion()
+      } else {
+        wx.showToast({
+          title: '授权失败！',
+          icon: 'none',
+          duration: 2000
+        })
+      }
+    })
+    .catch(res => {
+      wx.showToast({
+        title: '系统异常，请稍后重试',
+        icon: 'none',
+        duration: 2000
+      })
+    })
+    
+  },
+
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
@@ -170,5 +222,47 @@ Page({
       title: '逻辑闯关',
       path: '/pages/question/detail?id=' + this.data.question._id + '&type=' + this.data.type
     }
-  }
+  },
+  openAuth: function (e) {
+    this.setData({
+      coverView: true
+    })
+  },
+  cancelAuth: function(e) {
+    this.setData({
+      coverView: false
+    })
+  }, 
+  popAuth: function() {
+    this.setData({
+      coverView: true
+     })
+  },
+  checkAuth: function (e) {
+    this.setData({
+      auth: getApp().globalData.login
+     })
+    if (this.data.auth) {
+      return;
+    }
+    wx.getSetting({
+      success: res => {
+        if (!res.authSetting['scope.userInfo']) {
+           this.setData({
+            auth: false
+           })
+        }
+      },
+      fail(res) {
+        this.setData({
+          auth: false
+         })
+        wx.showToast({
+          title: '系统异常，请稍后重试',
+          icon: 'none',
+          duration: 2000
+        })
+      }
+    })
+  },
 })

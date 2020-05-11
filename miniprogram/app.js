@@ -11,7 +11,8 @@ App({
     }
     var openId = wx.getStorageSync('user_openid')
     this.globalData = {
-      openId:  openId ? openId : ''
+      openId:  openId ? openId : '',
+      login: false
     }
   },
   setGlobalData: function (data) {
