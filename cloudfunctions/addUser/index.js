@@ -42,8 +42,8 @@ exports.main = async (event, context) => {
        username: username, 
        curTime: curTime
      })
-
-     isRegist = result.result && '_id ' in result.result
+    
+     isRegist = result.result && '_id ' in result.result ? true : false
   }
   return {openid:OPENID, isRegist: isRegist}
 }
