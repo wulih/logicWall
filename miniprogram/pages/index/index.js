@@ -4,7 +4,6 @@ Page({
   data: {
     questionList: null,
     lastId: 0,
-    loading: false,
     noMore: false
   },
   onLoad: function () {
@@ -14,7 +13,6 @@ Page({
     this.setData({ 
       questionList: null,
       lastId: 0,
-      loading: false,
       noMore: false
      });
     this.getList()

@@ -17,7 +17,6 @@
   <block wx:for="{{questionList}}" wx:key="_id">
     <navigator class="navigator-block"  url="../question/detail?id={{item._id}}&type=all">
      <view class="question-redirect">{{item.question}}</view>
-     <view class="list-detail" wx:if = "{{!coverView}}"></view>
     </navigator>
   </block>
 </view>
