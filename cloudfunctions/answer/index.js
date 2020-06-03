@@ -141,5 +141,4 @@ function getCurTime()
         'url': 'curTime'
     }
   })
-  return curTimeResult.result
 }

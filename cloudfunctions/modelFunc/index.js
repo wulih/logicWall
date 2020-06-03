@@ -41,6 +41,9 @@ exports.main = async (event, context) => {
     case 'updateRecord':
       data=updateRecord(event.userId, 'successId' in event ? event.successId : '', 'failId' in event ? event.failId : '', 'curTime' in event ? event.curTime : '')
       break;
+    case 'delError':
+      data=delError(event.userId, event.subjectId, event.curTime)
+      break;
     case 'userErrorRecord':
       data = getModelByUserId(event.userId, 'startId' in event ? event.startId : '', 'limit' in event ? event.limit : 15)
       break;
@@ -91,6 +94,18 @@ function updateRecord(userId, successId = '', failId = '', curTime = '') {
       if (failId) {
         return updateFailRecord(userId, record, failId, curTime)
       }
+}
+
+function delError(userId, subjectId, curTime)
+{
+  return db.collection('record').where({
+          user_id: userId
+        }).update({
+          data: {
+            answer_fail: _.pull(subjectId),
+            update_at: curTime
+          }
+        })
 }
 
 function updateUser(userId, username) {
@@ -229,7 +244,7 @@ function getRank() {
     .sort({
       totalCnt: -1
     })
-    .limit(10)
+    .limit(20)
     .end()
 }
 

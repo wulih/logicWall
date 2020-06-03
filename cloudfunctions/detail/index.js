@@ -13,7 +13,7 @@ exports.main = async (event, context) => {
   const result = await callFunctionUrl({
     url:'getModelById', 
     id: id, 
-    select: {question: 1, option: 1}
+    select:'analysis' in event ? {question: 1, option: 1, analysis: 1} : {question: 1, option: 1}
   })
 
   return result.result

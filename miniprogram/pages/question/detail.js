@@ -1,6 +1,6 @@
 // miniprogram/pages/question/detail.js
+var openId = getApp().globalData.openId
 Page({
-
   /**
    * 页面的初始数据
    */
@@ -20,7 +20,7 @@ Page({
    */
   onLoad: function (options) {
     this.checkAuth()
-    options.openId = getApp().globalData.openId
+    options.openId = openId
     wx.cloud.callFunction({
       name: 'detail',
       data: options,
@@ -78,7 +78,7 @@ Page({
         userValue: e.detail.value,
         id: this.data.question._id,
         type: this.data.type,
-        openId: getApp().globalData.openId
+        openId: openId
       },
     })
       .then(res => {
@@ -140,6 +140,77 @@ Page({
             })
           return;
         }
+      })
+  },
+  delError: function(e) {
+    wx.cloud.callFunction({
+      name: 'delError',
+      data: {
+        id: this.data.question._id,
+        openId: openId
+      },
+    })
+      .then(res => {
+        if (res.result == null || ('list' in res.result && res.result.list.length <= 0)) {
+          wx.showToast({
+            title: '已到最后一题',
+            icon: 'none',
+            duration: 3000
+          })
+          return;
+        }
+        if ('errCode' in res.result && res.result.errCode === 401) {
+            this.popAuth()
+            return 
+        }
+        
+        if ('errCode' in res.result && res.result.errCode === 1) {
+          wx.showToast({
+            title: 'res.result.errMsg',
+            icon: 'none',
+            duration: 3000
+          })
+          return;
+        }
+
+        if (res.result.list && res.result.list.length > 0) {
+          this.setData({
+            question: this.data.question
+          })
+          wx.redirectTo({
+            url: './detail?id=' + res.result.list[0]._id + '&type=' + this.data.type
+            })
+          return;
+        }
+      })
+  },
+  analysis: function(e) {
+    wx.cloud.callFunction({
+      name: 'detail',
+      data: {
+        id: this.data.question._id,
+        analysis: 1
+      },
+    })
+      .then(res => {
+        if (res.result==null || res.result.list.length < 1) {
+          wx.showToast({
+            title: '系统异常，请稍后重试',
+            icon: 'none',
+            duration: 3000
+          })
+        } else {
+          this.setData({
+            error: res.result.list[0].analysis
+          })
+        }
+      })
+      .catch(res => {
+        wx.showToast({
+          title: '系统异常，请稍后重试',
+          icon: 'none',
+          duration: 2000
+        })
       })
   },
 

@@ -13,6 +13,10 @@
       <view class="page_error_title">{{error ? '解析：':''}}</view>
       <view class="page_error_desc">{{error}}</view>
     </view>
+    <view class="page_foot" wx:if="{{type == 'error'}}">
+      <image class = "flex-image" src = "../../images/delete.png" mode = "aspectFit" bindtap="delError"></image>
+      <image class = "flex-image" src = "../../images/search.png" mode = "aspectFit" bindtap="analysis"></image>
+    </view>
 </view>
 
 <view class="cover-view" wx:if = "{{coverView}}">
