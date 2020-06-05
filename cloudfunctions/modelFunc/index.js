@@ -98,14 +98,16 @@ function updateRecord(userId, successId = '', failId = '', curTime = '') {
 
 function delError(userId, subjectId, curTime)
 {
-  return db.collection('record').where({
+  return new Promise(function (resolve, reject) {
+  return resolve(db.collection('record').where({
           user_id: userId
         }).update({
           data: {
             answer_fail: _.pull(subjectId),
             update_at: curTime
           }
-        })
+        }))
+      })
 }
 
 function updateUser(userId, username) {

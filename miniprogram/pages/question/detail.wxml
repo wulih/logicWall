@@ -1,6 +1,7 @@
+<wxs src="../../tools/tools.wxs" module="tools" />
 <view class="page">
     <view class="page__hd">
-        <view class="page__desc">{{question.question}}</view>
+        <text class="page__desc">{{tools.replaceLine(question.question)}}</text>
     </view>
     <view class="page__bd">
            <mp-checkbox-group multi="{{false}}" bindchange="radioChange">

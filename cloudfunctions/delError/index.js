@@ -37,7 +37,7 @@ exports.main = async (event, context) => {
     result = await errorNextSubject(userId, event.id)
     const subjectId = subject.result.list[0]._id
     var curTimeResult = await getCurTime()
-    callFunctionUrl({
+    await callFunctionUrl({
       url:'delError',
       userId: userId,
       subjectId: subjectId,
