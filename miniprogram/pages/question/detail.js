@@ -86,7 +86,7 @@ Page({
           radioItems[index]['result'] = true;
           this.setData({
             question: this.data.question,
-            error: '已全部完成',
+            error: '已到最后一题',
             result: 'checkright'
           })
           return;
@@ -122,7 +122,7 @@ Page({
           radioItems[index]['result'] = true;
           this.setData({
             question: this.data.question,
-            error: '已全部完成',
+            error: '已到最后一题',
             result: 'checkright'
           })
           return;

@@ -6,5 +6,10 @@ var replaceLine = function (val) {
   return val ? val.replace(getRegExp("\\\\n", "g"), "\n") : val
 }
 
+var replaceLineNull = function (val) {
+  return val ? val.replace(getRegExp("\\\\n", "g"), "") : val
+}
+
 module.exports.replaceBr = replaceBr
 module.exports.replaceLine = replaceLine
+module.exports.replaceLineNull = replaceLineNull
